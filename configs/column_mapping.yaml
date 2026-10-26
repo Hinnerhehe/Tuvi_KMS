@@ -1,0 +1,202 @@
+# =============================================================================
+# column_mapping.yaml — ánh xạ cột Excel thật -> schema đích của KMS Tử Vi
+# Viết dựa trên file: TuVi_KMS_3Books_CANONICAL_MASTER_DEDUP_v1_0.xlsx
+#
+# Quy ước:
+#   - Khóa bên trái  = tên trường trong code/DB (đừng đổi tên tùy tiện)
+#   - Giá trị bên phải = tên cột THẬT trong Excel (sửa ở đây nếu Excel đổi tên)
+#   - Chạy `python scripts/inspect_excel.py` để kiểm tra mapping còn khớp file không
+# =============================================================================
+
+version: 1
+
+workbook:
+  file_name: TuVi_KMS_3Books_CANONICAL_MASTER_DEDUP_v1_0.xlsx
+
+# --- Số lượng kỳ vọng (từ SOURCE_AUDIT / MERGE_QA); lệch là báo lỗi khi inspect/import
+expected_counts:
+  NPL: 2191
+  BD: 4450
+  DAU: 3815
+  total: 10456
+
+# --- Sheet KHÔNG dùng cho MVP (giữ trong Excel để audit, không import)
+sheets_ignored:
+  - ALL_CANONICAL_ORIGINAL
+  - ALL_CANONICAL_V0
+  - CANONICAL_KNOWLEDGE        # bản cũ 22 cột; dùng CANONICAL_KNOWLEDGE_V1_0
+  - EXTRACTION                 # chỉ đọc cột review để audit (xem extraction_review)
+  - OCR_PAGE_TEXT
+  - SOURCE_SEGMENTS
+  - MISC_SOURCE_ROWS
+  - SHEET_INVENTORY
+  - TAXONOMY_DIFFERENCES
+  - OVERVIEW
+  - SOURCE_AUDIT
+  - MERGE_QA
+  - DEDUPE_LOG                 # chỉ để tham chiếu; ID gộp đã nằm trong CANONICAL_ID_REDIRECTS
+
+# -----------------------------------------------------------------------------
+# Các sheet được dùng
+# -----------------------------------------------------------------------------
+sources:
+  sheet: SOURCES
+  columns:
+    source_id: Source_ID
+    title: Title
+    author: Author
+    file_name: File_Name
+    total_pages: Total_Pages
+    source_status: Source_Status
+    book_code: Book_Code
+
+source_parts:                  # chỉ sách BD (7 PDF, trang đánh theo từng phần)
+  sheet: SOURCE_PARTS
+  columns:
+    source_id: Source_ID
+    part_number: Part_Number
+    pdf_file: PDF_File
+    total_pdf_pages: Total_PDF_Pages
+    extraction_status: Extraction_Status
+
+knowledge_items:
+  sheet: CANONICAL_KNOWLEDGE_V1_0     # view ACTIVE (đã gộp trùng chính xác)
+  columns:
+    knowledge_id: Canonical_ID        # ID ổn định, dùng trực tiếp làm khóa
+    book_code: Book_Code
+    source_id: Source_IDs
+    knowledge_type: Knowledge_Type
+    taxonomy_code: Primary_Taxonomy_Code
+    subject: Subject                  # DAU: ~91% trống
+    predicate: Predicate
+    object: Object
+    condition_context: Condition_Context
+    text: Canonical_Knowledge         # nội dung chính để embed/hiển thị
+    chapter: Chapters
+    pdf_pages_raw: PDF_Pages          # BD dạng "P7:36"; NPL/DAU dạng "36"
+    evidence_count: Evidence_Count
+    extract_ids: Supporting_Extract_IDs
+    source_certainty: Source_Certainty
+    author_stance: Author_Stances
+    review_flag: Review_Flag
+    release_status: Release_Status
+    validation_status: Validation_Status
+    conflict_status: Conflict_Status  # BD/DAU: chưa đánh giá -> KHÔNG dùng để phát hiện mâu thuẫn
+    dedupe_status: Dedupe_Status
+  required: [knowledge_id, book_code, text, pdf_pages_raw]
+
+evidence:
+  sheet: EVIDENCE
+  columns:
+    evidence_id: Evidence_ID
+    knowledge_id: Canonical_ID        # có thể trỏ tới ID đã gộp -> tra id_redirects
+    extract_id: Extract_ID
+    source_id: Source_ID
+    book_code: Book_Code
+    part_number: Part_Number          # chỉ BD có
+    pdf_page: PDF_Page
+    printed_page: Printed_Page        # NPL, BD: trống 100%; DAU có
+    original_text: Original_Text      # chỉ để hiển thị đoạn trích NGẮN, không trích dài
+    ocr_legibility: OCR_Legibility
+    evidence_method: Evidence_Method
+    extraction_method: Extraction_Method
+    review_status: Review_Status
+    evidence_status: Evidence_Status
+    origin: Evidence_Origin           # NPL: SYNTHESIZED_FROM_EXTRACTION (không phải evidence độc lập)
+
+id_redirects:
+  sheet: CANONICAL_ID_REDIRECTS
+  columns:
+    original_id: Original_Canonical_ID
+    active_id: Active_Canonical_ID
+    reason: Reason
+
+vocabulary:
+  sheet: VOCABULARY
+  alias_separator: ";"
+  columns:
+    vocab_id: Vocab_ID
+    term: Canonical_Term
+    entity_type: Entity_Type
+    aliases: Aliases                  # chỉ ~7% có alias -> cần bổ sung thủ công/tự sinh
+    taxonomy_code: Taxonomy_Code
+    definition: Definition_or_Note
+    status: Status
+    source_id: Source_ID
+    book_code: Book_Code
+
+taxonomy:
+  sheet: TAXONOMY
+  columns:
+    code: Taxonomy_Code
+    parent_code: Parent_Code
+    level1: Level_1_Domain
+    level2: Level_2_Subdomain
+    description: Description
+
+# Chỉ dùng để AUDIT (đếm bản ghi đã có người duyệt hay chưa), không import vào DB
+extraction_review:
+  sheet: EXTRACTION
+  columns:
+    book_code: Book_Code
+    reviewer: Reviewer
+    review_date: Review_Date
+    review_status: Review_Status
+    review_comment: Review_Comment
+
+# -----------------------------------------------------------------------------
+# Cách đọc số trang (PDF_Pages trong knowledge_items)
+# -----------------------------------------------------------------------------
+page_parsing:
+  separator: ";"                      # nhiều trang: "P1:57; P1:58"
+  patterns:
+    BD: '^P(?P<part>\d+):(?P<page>\d+)$'
+    default: '^(?P<page>\d+)$'
+
+# -----------------------------------------------------------------------------
+# Trust tier — THAY cho gate "approved + verified" (hiện 0 bản ghi đạt)
+# Quy tắc duyệt từ trên xuống, khớp đầu tiên thắng.
+# Khóa trong `when` là TÊN TRƯỜNG ở knowledge_items.columns;
+# hậu tố _contains = chứa chuỗi con; giá trị là danh sách = "một trong".
+# -----------------------------------------------------------------------------
+trust_tiers:
+  enabled_tiers: [1, 2, 3]            # chỉ index các tier này; bỏ 3 nếu muốn chặt hơn
+  default_tier: 9
+  definitions:
+    1: {label: "NPL — có cấu trúc, release LOCKED", ui_badge: "Đối chiếu theo trang PDF, chưa kiểm thủ công"}
+    2: {label: "DAU — text layer, chưa duyệt",       ui_badge: "Bản dịch/OCR text layer, chưa duyệt ngữ nghĩa"}
+    3: {label: "BD — OCR, chưa duyệt",               ui_badge: "OCR chưa kiểm — có thể sai chính tả"}
+    9: {label: "Loại khỏi index cho đến khi review", ui_badge: null}
+  rules:
+    - tier: 9
+      when: {book_code: [BD, DAU], review_flag_contains: OCR_REVIEW_REQUIRED}
+    - tier: 1
+      when: {book_code: NPL}
+    - tier: 2
+      when: {book_code: DAU}
+    - tier: 3
+      when: {book_code: BD}
+
+# -----------------------------------------------------------------------------
+# Chunking (tham số ĐỀ XUẤT, cần thử trên golden set rồi chỉnh)
+# -----------------------------------------------------------------------------
+chunking:
+  version: "0.1"
+  short_record_chars: 40              # bản ghi ngắn hơn ngưỡng này = ứng viên để gộp
+  embed_text_template: "{chapter} | {subject} | {text}"
+  strategies:
+    NPL:
+      mode: one_record_one_chunk
+    DAU:
+      mode: merge_adjacent            # gộp bản ghi liên tiếp cùng trang + cùng chương
+      group_by: [pdf_page, chapter]
+      order_by: knowledge_id
+      min_chars: 150
+      max_chars: 600
+    BD:
+      mode: merge_adjacent
+      group_by: [pdf_page, chapter]
+      order_by: knowledge_id
+      min_chars: 150
+      max_chars: 600
+      merge_if_review_flag_contains: PAGE_OR_PARAGRAPH_CONTINUATION

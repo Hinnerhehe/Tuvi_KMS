@@ -1,0 +1,15 @@
+# Cấu hình retrieval cho KMS Tử Vi
+top_n_per_book: 10
+rrf_k: 60
+top_k_default: 10
+max_context_chunks: 8
+
+# Ngưỡng tin cậy: chỉ truy xuất chunk có trust_tier nằm trong danh sách này
+# (đọc thêm từ configs/column_mapping.yaml -> trust_tiers.enabled_tiers)
+enabled_tiers: [1, 2, 3]
+
+# Ngưỡng abstention: khi điểm RRF thấp hơn ngưỡng -> trả lời "không đủ căn cứ"
+abstain_rrf_threshold: 0.005
+
+# Citation: số ký tự trích dẫn tối đa
+excerpt_max_chars: 300

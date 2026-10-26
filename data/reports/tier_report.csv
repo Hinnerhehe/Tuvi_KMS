@@ -1,0 +1,5 @@
+trust_tier,count,label
+1,2191,"NPL — có cấu trúc, release LOCKED"
+2,3798,"DAU — text layer, chưa duyệt"
+3,2691,"BD — OCR, chưa duyệt"
+9,1776,Loại khỏi index cho đến khi review

@@ -1,0 +1,23 @@
+{
+  "imported": 10456,
+  "rejected": 0,
+  "per_book": {
+    "NPL": 2191,
+    "BD": 4450,
+    "DAU": 3815
+  },
+  "tier_counts": {
+    "1": 2191,
+    "9": 1776,
+    "3": 2691,
+    "2": 3798
+  },
+  "enabled_tiers": [
+    1,
+    2,
+    3
+  ],
+  "duplicate_text_groups": 54,
+  "short_records": 2303,
+  "unparsed_pages": 0
+}
