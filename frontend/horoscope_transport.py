@@ -1,0 +1,31 @@
+"""Consume progress records without treating a partial/disconnected report as success."""
+import json
+import requests
+
+
+def reading_events(api_base: str, payload: dict):
+    response = requests.post(f'{api_base}/api/v1/horoscope/read-stream', json=payload,
+                             stream=True, timeout=(5, 75))
+    try:
+        response.raise_for_status()
+        finished = False
+        for line in response.iter_lines(decode_unicode=True):
+            if not line:
+                continue
+            if isinstance(line, bytes):
+                line = line.decode('utf-8')
+            event = json.loads(line)
+            if not isinstance(event, dict):
+                raise ValueError('Dịch vụ trả tiến độ không hợp lệ.')
+            if event.get('event') == 'error':
+                raise ValueError(event.get('message', 'Dịch vụ chưa tạo được bài đọc.'))
+            if event.get('event') == 'result':
+                report = event.get('report')
+                if not isinstance(report, dict) or report.get('status') != 'ok' or not isinstance(report.get('reading'), dict):
+                    raise ValueError('Dịch vụ trả báo cáo không hợp lệ.')
+                finished = True
+            yield event
+        if not finished:
+            raise ValueError('Kết nối kết thúc trước khi hoàn tất bài đọc. Hãy thử lại; báo cáo trước vẫn được giữ.')
+    finally:
+        response.close()

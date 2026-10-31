@@ -1,0 +1,15 @@
+# Phase 5 Streamlit + Horoscope API (tested with Python 3.14).
+fastapi>=0.115,<1
+uvicorn>=0.30,<1
+pydantic>=2.8,<3
+sqlalchemy>=2.0,<3
+streamlit>=1.66.1,<2
+requests>=2.32,<3
+PyYAML>=6,<7
+tzdata>=2024.1
+# Existing horoscope interpreter uses the legacy Gemini adapter.
+google-generativeai>=0.8,<1
+# Used by backend modules imported by main.py.
+numpy>=2,<3
+pandas>=2,<4
+openpyxl>=3.1,<4

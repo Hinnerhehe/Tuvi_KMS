@@ -33,6 +33,8 @@ MANIFEST_PATH = Path(os.getenv("KMS_MANIFEST", ROOT / "data/processed/index_mani
 EMBEDDING_MODEL = os.getenv("KMS_EMBEDDING_MODEL", "BAAI/bge-m3")
 EMBEDDING_DIM = int(os.getenv("KMS_EMBEDDING_DIM", "1024"))
 VECTOR_STORE = os.getenv("KMS_VECTOR_STORE", "qdrant")  # qdrant | numpy
+# R4: embedding provider — "local" (sentence-transformers) | "gemini" (Gemini API)
+EMBEDDING_PROVIDER = os.getenv("KMS_EMBEDDING_PROVIDER", "local")
 
 # --- LLM ---
 LLM_PROVIDER = os.getenv("KMS_LLM_PROVIDER", "gemini")  # gemini | mock
@@ -40,6 +42,10 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_MODEL = os.getenv("KMS_GEMINI_MODEL", "gemini-3.8-flash")
 LLM_MAX_TOKENS = int(os.getenv("KMS_LLM_MAX_TOKENS", "2048"))
 LLM_TEMPERATURE = float(os.getenv("KMS_LLM_TEMPERATURE", "0.0"))
+# Horoscope uses a separate model and bounded request, leaving the KMS chat setting intact.
+HOROSCOPE_MODEL = os.getenv("KMS_HOROSCOPE_MODEL", "gemini-3.5-flash-lite")
+HOROSCOPE_TIMEOUT_SECONDS = min(60.0, max(5.0, float(os.getenv("KMS_HOROSCOPE_TIMEOUT_SECONDS", "45"))))
+HOROSCOPE_MAX_TOKENS = int(os.getenv("KMS_HOROSCOPE_MAX_TOKENS", "4096"))
 ENABLE_QUERY_CACHE = os.getenv("KMS_ENABLE_QUERY_CACHE", "true").lower() in ("true", "1", "yes")
 
 # --- trích dẫn ---

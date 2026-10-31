@@ -1,0 +1,662 @@
+{
+  "claims": {
+    "tieu_de": "Luận giải lá số Tử Vi - Nam mệnh Ất Hợi",
+    "luan_diem": [
+      {
+        "topic": "ban_menh",
+        "tinh_chat": "trung_tinh",
+        "nhan_dinh": "Tại cung Mệnh, sao Thất sát thủ cung Thìn cùng Kình dương đắc địa, theo Nguyễn Phát Lộc (Chương 11) và Đẩu Số Toàn Thư cho thấy dấu hiệu của sự lao động kỹ thuật nặng hoặc thử thách ban đầu, chưa đủ dữ liệu để khẳng định mức độ thành công chung cuộc hay tính cách tuyệt đối nếu thiếu các sát tinh hội chiếu toàn diện.",
+        "gioi_han": "Chưa đối chiếu đầy đủ các sao hội chiếu khác và trạng thái đắc hãm chi tiết của toàn bộ tam hợp Mệnh Tài Quan.",
+        "fact_ids": [
+          "c5_s13",
+          "c5_s52"
+        ],
+        "source_refs": [
+          1,
+          2
+        ]
+      },
+      {
+        "topic": "su_nghiep",
+        "tinh_chat": "luu_y",
+        "nhan_dinh": "Tại tiểu hạn năm 2026 cung Quan lộc ở Thân có Phá quân (hãm) gặp sao Tuyệt và Kiếp sát, theo Đẩu Số Toàn Thư (SAO VŨ KHÚC) và Tử Vi Bửu Đình, cấu hình này nhắc nhở cần cân nhắc kỹ trước khi thay đổi công việc hoặc đầu tư lớn để tránh vất vả, lao đao.",
+        "gioi_han": "Chưa kiểm tra hết các lưu tinh và tác động của Tuần Triệt thực tế tại cung Thân trong năm Bính Ngọ.",
+        "fact_ids": [
+          "c9_s14",
+          "c9_s48",
+          "c9_s104"
+        ],
+        "source_refs": [
+          8,
+          10
+        ]
+      },
+      {
+        "topic": "tai_chinh",
+        "tinh_chat": "luu_y",
+        "nhan_dinh": "Tại cung Tài Bạch ở Tý có Tham lang (hãm) đi cùng Tiểu hao và Thiên không, theo Nguyễn Phát Lộc (Chương 4) cho thấy cần lưu ý quản lý dòng tiền cẩn trọng, tránh tư duy đầu tư mạo hiểm hoặc chi tiêu ngẫu hứng gây thâm thủng tài chính.",
+        "gioi_han": "Chưa xác minh sự xuất hiện của các cát tinh hỗ trợ tài lộc khác tại cung Tài Bạch và các cung tam hợp chiếu.",
+        "fact_ids": [
+          "c1_s9",
+          "c1_s30",
+          "c1_s108"
+        ],
+        "source_refs": [
+          11,
+          12
+        ]
+      },
+      {
+        "topic": "tinh_cam",
+        "tinh_chat": "luu_y",
+        "nhan_dinh": "Tại đại hạn hiện tại cung Phu thê ở Dần có Vũ khúc và Thiên tướng cùng Đà la, Linh tinh, theo Đẩu Số Toàn Thư và Tử Vi Bửu Đình, đương số cần sự thấu hiểu và kiên nhẫn để dung hòa mối quan hệ gia đạo, tránh những bất đồng nhỏ do áp lực cuộc sống.",
+        "gioi_han": "Chưa đối chiếu đầy đủ trạng thái của các sao hóa giải và các cung liên quan đến chuyện tình cảm lâu dài.",
+        "fact_ids": [
+          "c3_s4",
+          "c3_s11",
+          "c3_s51",
+          "c3_s55"
+        ],
+        "source_refs": [
+          14,
+          16,
+          17
+        ]
+      },
+      {
+        "topic": "van_han",
+        "tinh_chat": "trung_tinh",
+        "nhan_dinh": "Tại tiểu hạn năm 2026 (Bính Ngọ), cung Quan lộc đóng vai trò là cung tiểu hạn chịu ảnh hưởng của Phá quân hãm và Văn Khúc, theo Đẩu Số Toàn Thư đây là giai đoạn đòi hỏi sự kiên trì trong công việc, cần thận trọng trước các quyết định mang tính bước ngoặt.",
+        "gioi_han": "Chưa đủ dữ liệu về các lưu tứ hóa năm Bính Ngọ và các sao lưu niên khác tác động trực tiếp lên vận trình năm.",
+        "fact_ids": [
+          "c9_s14",
+          "c9_s58"
+        ],
+        "source_refs": [
+          3,
+          8
+        ]
+      }
+    ]
+  },
+  "facts": [
+    {
+      "fact_id": "c1_s30",
+      "star_id": 30,
+      "sao": "Tiểu hao",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Tài Bạch",
+      "dia_chi": "Tý",
+      "roles": [
+        "Thân cư"
+      ],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        11
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c1_s108",
+      "star_id": 108,
+      "sao": "Thiên không",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Tài Bạch",
+      "dia_chi": "Tý",
+      "roles": [
+        "Thân cư"
+      ],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        12
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c1_s44",
+      "star_id": 44,
+      "sao": "Suy",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Tài Bạch",
+      "dia_chi": "Tý",
+      "roles": [
+        "Thân cư"
+      ],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        13
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c1_s9",
+      "star_id": 9,
+      "sao": "Tham lang",
+      "nhom": "chinh_tinh",
+      "dac_tinh": "H",
+      "cung": "Tài Bạch",
+      "dia_chi": "Tý",
+      "roles": [
+        "Thân cư"
+      ],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        2,
+        11,
+        12,
+        13
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c1_s67",
+      "star_id": 67,
+      "sao": "Ân quang",
+      "nhom": "cat_tinh",
+      "dac_tinh": "—",
+      "cung": "Tài Bạch",
+      "dia_chi": "Tý",
+      "roles": [
+        "Thân cư"
+      ],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [],
+      "source_status": "Chưa tìm được đoạn sách phù hợp để diễn giải."
+    },
+    {
+      "fact_id": "c1_s59",
+      "star_id": 59,
+      "sao": "Thiên khôi",
+      "nhom": "cat_tinh",
+      "dac_tinh": "—",
+      "cung": "Tài Bạch",
+      "dia_chi": "Tý",
+      "roles": [
+        "Thân cư"
+      ],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [],
+      "source_status": "Chưa tìm được đoạn sách phù hợp để diễn giải."
+    },
+    {
+      "fact_id": "c3_s51",
+      "star_id": 51,
+      "sao": "Đà la",
+      "nhom": "risk_stars",
+      "dac_tinh": "H",
+      "cung": "Phu thê",
+      "dia_chi": "Dần",
+      "roles": [
+        "Đại hạn hiện tại"
+      ],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        16
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c3_s55",
+      "star_id": 55,
+      "sao": "Linh tinh",
+      "nhom": "risk_stars",
+      "dac_tinh": "Đ",
+      "cung": "Phu thê",
+      "dia_chi": "Dần",
+      "roles": [
+        "Đại hạn hiện tại"
+      ],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        17
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c3_s96",
+      "star_id": 96,
+      "sao": "Cô thần",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Phu thê",
+      "dia_chi": "Dần",
+      "roles": [
+        "Đại hạn hiện tại"
+      ],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        18
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c3_s4",
+      "star_id": 4,
+      "sao": "Vũ khúc",
+      "nhom": "chinh_tinh",
+      "dac_tinh": "V",
+      "cung": "Phu thê",
+      "dia_chi": "Dần",
+      "roles": [
+        "Đại hạn hiện tại"
+      ],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        2,
+        8,
+        12,
+        14,
+        15,
+        16,
+        17
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c3_s11",
+      "star_id": 11,
+      "sao": "Thiên tướng",
+      "nhom": "chinh_tinh",
+      "dac_tinh": "M",
+      "cung": "Phu thê",
+      "dia_chi": "Dần",
+      "roles": [
+        "Đại hạn hiện tại"
+      ],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        10,
+        14,
+        15
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c3_s68",
+      "star_id": 68,
+      "sao": "Thiên quý",
+      "nhom": "cat_tinh",
+      "dac_tinh": "—",
+      "cung": "Phu thê",
+      "dia_chi": "Dần",
+      "roles": [
+        "Đại hạn hiện tại"
+      ],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [],
+      "source_status": "Chưa tìm được đoạn sách phù hợp để diễn giải."
+    },
+    {
+      "fact_id": "c5_s38",
+      "star_id": 38,
+      "sao": "Quan phù",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Mệnh",
+      "dia_chi": "Thìn",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        5
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c5_s20",
+      "star_id": 20,
+      "sao": "Tử phù",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Mệnh",
+      "dia_chi": "Thìn",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        3
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c5_s40",
+      "star_id": 40,
+      "sao": "Mộc dục",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Mệnh",
+      "dia_chi": "Thìn",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        6
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c5_s52",
+      "star_id": 52,
+      "sao": "Kình dương",
+      "nhom": "risk_stars",
+      "dac_tinh": "Đ",
+      "cung": "Mệnh",
+      "dia_chi": "Thìn",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        1,
+        2,
+        8
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c5_s90",
+      "star_id": 90,
+      "sao": "Thiên la",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Mệnh",
+      "dia_chi": "Thìn",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        4
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c5_s13",
+      "star_id": 13,
+      "sao": "Thất sát",
+      "nhom": "chinh_tinh",
+      "dac_tinh": "H",
+      "cung": "Mệnh",
+      "dia_chi": "Thìn",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        12
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c5_s62",
+      "star_id": 62,
+      "sao": "Hữu bật",
+      "nhom": "cat_tinh",
+      "dac_tinh": "—",
+      "cung": "Mệnh",
+      "dia_chi": "Thìn",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [],
+      "source_status": "Chưa tìm được đoạn sách phù hợp để diễn giải."
+    },
+    {
+      "fact_id": "c9_s48",
+      "star_id": 48,
+      "sao": "Tuyệt",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Quan lộc",
+      "dia_chi": "Thân",
+      "roles": [
+        "Tiểu hạn 2026"
+      ],
+      "tuan": true,
+      "triet": false,
+      "source_refs": [
+        10
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c9_s104",
+      "star_id": 104,
+      "sao": "Kiếp sát",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Quan lộc",
+      "dia_chi": "Thân",
+      "roles": [
+        "Tiểu hạn 2026"
+      ],
+      "tuan": true,
+      "triet": false,
+      "source_refs": [
+        8
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c9_s14",
+      "star_id": 14,
+      "sao": "Phá quân",
+      "nhom": "chinh_tinh",
+      "dac_tinh": "H",
+      "cung": "Quan lộc",
+      "dia_chi": "Thân",
+      "roles": [
+        "Tiểu hạn 2026"
+      ],
+      "tuan": true,
+      "triet": false,
+      "source_refs": [
+        8,
+        10
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c9_s58",
+      "star_id": 58,
+      "sao": "Văn Khúc",
+      "nhom": "cat_tinh",
+      "dac_tinh": "H",
+      "cung": "Quan lộc",
+      "dia_chi": "Thân",
+      "roles": [
+        "Tiểu hạn 2026"
+      ],
+      "tuan": true,
+      "triet": false,
+      "source_refs": [
+        3
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c9_s60",
+      "star_id": 60,
+      "sao": "Thiên việt",
+      "nhom": "cat_tinh",
+      "dac_tinh": "—",
+      "cung": "Quan lộc",
+      "dia_chi": "Thân",
+      "roles": [
+        "Tiểu hạn 2026"
+      ],
+      "tuan": true,
+      "triet": false,
+      "source_refs": [],
+      "source_status": "Chưa tìm được đoạn sách phù hợp để diễn giải."
+    },
+    {
+      "fact_id": "c11_s26",
+      "star_id": 26,
+      "sao": "Trực phù",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Thiên di",
+      "dia_chi": "Tuất",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [],
+      "source_status": "Chưa tìm được đoạn sách phù hợp để diễn giải."
+    },
+    {
+      "fact_id": "c11_s46",
+      "star_id": 46,
+      "sao": "Tử",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Thiên di",
+      "dia_chi": "Tuất",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        3,
+        4,
+        5,
+        8,
+        10,
+        11,
+        12,
+        13,
+        15,
+        16,
+        17,
+        18
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c11_s97",
+      "star_id": 97,
+      "sao": "Quả tú",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Thiên di",
+      "dia_chi": "Tuất",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        18
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c11_s91",
+      "star_id": 91,
+      "sao": "Địa võng",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Thiên di",
+      "dia_chi": "Tuất",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [],
+      "source_status": "Chưa tìm được đoạn sách phù hợp để diễn giải."
+    },
+    {
+      "fact_id": "c11_s102",
+      "star_id": 102,
+      "sao": "Lưu hà",
+      "nhom": "risk_stars",
+      "dac_tinh": "—",
+      "cung": "Thiên di",
+      "dia_chi": "Tuất",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [],
+      "source_status": "Chưa tìm được đoạn sách phù hợp để diễn giải."
+    },
+    {
+      "fact_id": "c11_s2",
+      "star_id": 2,
+      "sao": "Liêm trinh",
+      "nhom": "chinh_tinh",
+      "dac_tinh": "M",
+      "cung": "Thiên di",
+      "dia_chi": "Tuất",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        12
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c11_s7",
+      "star_id": 7,
+      "sao": "Thiên phủ",
+      "nhom": "chinh_tinh",
+      "dac_tinh": "—",
+      "cung": "Thiên di",
+      "dia_chi": "Tuất",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [
+        3
+      ],
+      "source_status": "Có đoạn nhắc tên sao; cần đối chiếu thêm điều kiện tổ hợp/cung."
+    },
+    {
+      "fact_id": "c11_s61",
+      "star_id": 61,
+      "sao": "Tả phù",
+      "nhom": "cat_tinh",
+      "dac_tinh": "—",
+      "cung": "Thiên di",
+      "dia_chi": "Tuất",
+      "roles": [],
+      "tuan": false,
+      "triet": false,
+      "source_refs": [],
+      "source_status": "Chưa tìm được đoạn sách phù hợp để diễn giải."
+    }
+  ],
+  "refs": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18
+  ]
+}

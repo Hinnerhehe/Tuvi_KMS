@@ -1,0 +1,108 @@
+:root {
+  --ground: #f1f5f4; --surface: #ffffff; --raised: #f6f8f7;
+  --text: #131a19; --muted: #545f5c; --accent: #1b6c80;
+  --border: #e4eae7; --control: #c6cfcb; --primary: #172c29;
+  --gap: 24px; --font: 'IBM Plex Sans', sans-serif;
+}
+html, body, [data-testid="stApp"], input, textarea, button, select,
+[data-testid="stApp"] [data-testid="stMarkdownContainer"],
+[data-testid="stApp"] [data-baseweb] {font-family: var(--font); color: var(--text);}
+[data-testid="stApp"] input, [data-testid="stApp"] button,
+[data-testid="stApp"] [data-baseweb] *,
+[data-testid="stExpander"] summary p {font-family: var(--font) !important;}
+[data-testid="stAppViewContainer"], [data-testid="stSidebar"], [data-testid="stHeader"] {background: var(--ground);}
+[data-testid="stSidebar"] {min-width: 310px; max-width: 310px; border: 0;}
+[data-testid="stSidebar"][data-collapsed="true"] {width: 0 !important; min-width: 0 !important; max-width: 0 !important; visibility: hidden;}
+[data-testid="stExpandSidebarButton"]::after {content: 'Nhập ngày sinh'; font-family: var(--font); font-size: 14px; color: var(--text); margin-left: 6px; white-space: nowrap;}
+[data-testid="stSidebarContent"] {padding-top: 20px;}
+[data-testid="stMainBlockContainer"] {max-width: 1240px; padding: 24px; margin: 60px auto 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;}
+/* At 1440: 310px form frame + 8px inset + 1122px sheet.
+   Inside sheet: two equal (available width - 24px) / 2 columns. */
+[data-testid="stVerticalBlock"] {gap: 16px;}
+h1, h2, h3, p, label {font-family: var(--font) !important; color: var(--text); letter-spacing: 0;}
+h1 {font-size: 26px !important; font-weight: 600 !important; padding: 0 !important; line-height: 1.3 !important;}
+h2, [data-testid="stHeadingWithActionElements"] h2 {font-size: 18px !important; font-weight: 600 !important; line-height: 1.4; padding: 0 !important;}
+h3 {font-size: 14px !important; font-weight: 600; margin: 16px 0 6px; padding: 0 !important; line-height: 1.5;}
+p, li, label, input, [data-testid="stWidgetLabel"] p {font-size: 14px !important; line-height: 1.65;}
+p {margin: 0 0 12px;}
+ul {padding-left: 20px; margin: 4px 0 12px;}
+li + li {margin-top: 7px;}
+.muted, .viewer-bar, footer, [data-testid="stCaptionContainer"] p {color: var(--muted);}
+[data-testid="stCaptionContainer"] p {font-size: 12px !important;}
+[data-baseweb="input"], [data-baseweb="select"] > div {background: var(--surface); border-color: var(--control); border-radius: 6px;}
+input::placeholder {color: var(--muted) !important; opacity: 1;}
+button[kind="primaryFormSubmit"] {background: var(--primary); border-color: var(--primary); color: white; border-radius: 6px; min-height: 40px;}
+button[kind="primaryFormSubmit"] p {color: white;}
+button:hover {filter: brightness(.96);}
+button:focus-visible, input:focus-visible, [role="tab"]:focus-visible {outline: 2px solid var(--accent); outline-offset: 3px;}
+.brand {display: flex; align-items: center; gap: 12px; font-size: 19px; margin: 0 0 16px;}
+.brand-mark {color: var(--accent); font-size: 30px; line-height: 1;}
+.viewer-bar {display: flex; justify-content: space-between; gap: 16px; font-size: 12px; padding-bottom: 4px;}
+.reading-panel {padding: 24px; background: var(--raised); border-radius: 8px; min-width: 0;}
+.reading-panel h2 {margin: 0 0 14px;}
+.reading-panel > :last-child, .reading-field > :last-child {margin-bottom: 0;}
+.intro-grid, .overview-grid {display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); align-items: start;}
+.intro-grid {align-items: center;}
+.overview-grid {background: var(--raised); border-radius: 8px; gap: 0;}
+.intro-topics {display: flex; flex-direction: column; gap: 8px; margin: 18px 0; font-weight: 500;}
+.book-row {display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap);}
+.book-row p {color: var(--muted); margin: 6px 0 0;}
+.palace-preview {display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 60px); gap: 4px; font-size: 12px;}
+.map-cell {background: var(--raised); display: grid; place-content: center; border-radius: 6px; color: var(--muted);}
+.map-center {grid-area: 2/2/4/4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; padding: 12px;}
+.map-center strong {font-size: 28px; font-weight: 400; color: var(--accent);}
+.map-center span {font-size: 12px; color: var(--muted); max-width: 140px;}
+.report-heading {display: flex; justify-content: space-between; gap: 16px; align-items: baseline;}
+.report-heading h2 {margin: 0;}
+.report-heading > span {font-size: 12px; color: var(--muted);}
+[data-testid="stTabs"] [role="tablist"] {gap: 24px;}
+[data-testid="stTabs"] [role="tab"][aria-selected="true"] {color: var(--text); border-bottom-color: var(--accent) !important;}
+.identity-strip {display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap); padding: 20px 0; border-block: 1px solid var(--border);}
+.identity-strip > div {display: flex; flex-direction: column; gap: 8px; min-width: 0;}
+.identity-strip span {font-size: 12px;}
+.identity-strip strong {font-size: 16px; font-weight: 500; font-variant-numeric: tabular-nums;}
+.element-dot {display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; background: var(--muted);}
+.element-dot.hoa {background: #a6362d;} .element-dot.thuy {background: #1b6c80;}
+.element-dot.moc {background: #356c4a;} .element-dot.kim {background: #64706b;} .element-dot.tho {background: #8a6719;}
+.notice {font-size: 13px !important; color: #715013; background: #fbf7eb; padding: 12px 16px; border-radius: 6px; margin: 0;}
+[data-baseweb="tab-list"] {gap: 24px; border-bottom: 1px solid var(--border);}
+[data-baseweb="tab"] {padding: 8px 0; color: var(--muted);}
+[data-baseweb="tab"][aria-selected="true"] {color: var(--text); font-weight: 600;}
+[data-baseweb="tab-highlight"] {background: var(--accent); height: 2px;}
+.reading-field h3 {margin-top: 16px;}
+.reading-field:first-of-type h3 {margin-top: 0;}
+.horoscope-chart .grid {display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;}
+.horoscope-chart .cell {background: var(--raised); border: 1px solid var(--border); padding: 12px; border-radius: 6px; min-width: 0; overflow-wrap: anywhere;}
+.horoscope-chart .cell.center {background: none; border: 0;}
+.horoscope-chart .chi, .horoscope-chart .meta {font-size: 12px; color: var(--muted);}
+.horoscope-chart .ten {font-size: 14px; font-weight: 600; margin: 6px 0 10px;}
+.horoscope-chart .sao {display: inline-block; margin: 0 6px 4px 0; font-size: 12px;}
+.horoscope-chart .chinh {color: var(--accent); font-weight: 600;}
+.horoscope-chart .qc {font-size: 12px; margin-right: 6px; color: var(--muted) !important;}
+footer {font-size: 12px; line-height: 1.7; padding-top: 24px; border-top: 1px solid var(--border); margin-top: 8px;}
+.star-table-wrap {max-height: 420px; overflow: auto; border: 1px solid var(--border); border-radius: 6px;}
+.star-table {width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.5;}
+.star-table th {font-size: 12px; color: var(--muted); font-weight: 500; text-align: left; background: var(--surface); position: sticky; top: 0;}
+.star-table th, .star-table td {padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top;}
+.star-table td:first-child {color: var(--accent); font-weight: 500;}
+.star-table-wrap:focus-visible {outline: 2px solid var(--accent); outline-offset: 3px;}
+@media(max-width: 1000px) {.overview-grid, .intro-grid {grid-template-columns: 1fr;} .palace-preview {max-width: 500px; width: 100%; margin: auto;}}
+/* Streamlit's mobile drawer is an overlay; use an opaque scrim, no heavy shadow. */
+@media(max-width: 991px) {[data-testid="stSidebar"] {box-shadow: none !important;}} /* taste-skill-ignore: removes the framework drawer shadow; does not add one. */
+@media(max-width: 640px) {
+  .star-table thead {display: none;}
+  .star-table tr {display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--border); padding: 12px; gap: 12px;}
+  .star-table td {border: 0; padding: 0; overflow-wrap: anywhere;}
+  .star-table td::before {content: attr(data-label); display: block; color: var(--muted); font-size: 12px; font-weight: 400; margin-bottom: 4px;}
+  [data-testid="stMainBlockContainer"] {margin-top: 48px; padding: 20px 16px; border: 0; border-radius: 0;}
+  h1 {font-size: 23px !important;}
+  .reading-panel {padding: 20px;}
+  .identity-strip {grid-template-columns: 1fr 1fr; gap: 20px;}
+  .book-row {grid-template-columns: 1fr; gap: 16px;}
+  .viewer-bar span:last-child {display: none;}
+  .report-heading {flex-direction: column; gap: 4px;}
+  .horoscope-chart .grid {grid-template-columns: 1fr;}
+  .horoscope-chart .cell.center {display: none;}
+  [data-baseweb="tab-list"] {gap: 20px;}
+}
+@media(prefers-reduced-motion: reduce) {*, *::before, *::after {animation: none !important; transition: none !important;}}
