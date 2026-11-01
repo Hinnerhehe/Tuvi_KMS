@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: kms-tuvi-backend
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    region: singapore
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: KMS_HOROSCOPE_MODEL
+        value: gemini-3.5-flash-lite
+      - key: KMS_GEMINI_MODEL
+        value: gemini-3.8-flash
+      - key: KMS_LLM_PROVIDER
+        value: gemini

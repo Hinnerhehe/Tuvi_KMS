@@ -61,7 +61,9 @@ def test_changing_the_year_misses_cache():
 def test_timeout_is_not_cached():
     horoscope_cache.clear()
     request = make_request(provider="auto", target_year=2026, top_k_per_topic=4)
-    with patch.object(interpreter, "GEMINI_API_KEY", "test-key"), patch(
+    with patch.object(interpreter, "GEMINI_API_KEY", "test-key"), patch.object(
+        interpreter, "HOROSCOPE_FALLBACK_MODELS", ()
+    ), patch(
         "backend.app.services.horoscope_interpreter.requests.post",
         side_effect=[requests.Timeout("quá hạn"), gemini_response(_reading_for(2026))],
     ) as post:

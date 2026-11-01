@@ -91,13 +91,39 @@ def test_local_report_changes_with_palace_stars_instead_of_constant_finance_rela
 def test_gemini_busy_is_one_bounded_attempt_with_explicit_reason():
     response = Mock(status_code=503)
     response.json.return_value = {'error': {'message': 'busy'}}
-    with patch.object(interpreter, 'GEMINI_API_KEY', 'test-secret'), patch('requests.post', return_value=response) as post:
+    with patch.object(interpreter, 'GEMINI_API_KEY', 'test-secret'), \
+            patch.object(interpreter, 'HOROSCOPE_FALLBACK_MODELS', ()), \
+            patch('requests.post', return_value=response) as post:
         result = interpreter.interpret_horoscope(chart(), '', provider='auto')
     assert post.call_count == 1
     assert post.call_args.kwargs['timeout'][1] <= 60
     assert result['_generation']['reason'] == 'busy'
     assert result['_generation']['attempts'] == 1
     assert 'test-secret' not in json.dumps(result)
+
+
+def test_busy_primary_model_falls_back_before_mock():
+    from backend.app.services.horoscope_analysis import build_star_facts
+    f = chart()
+    context = bridge.retrieve_horoscope_context(f)
+    facts = build_star_facts(f, context)
+    fact = next(s for s in facts if s['source_refs'])
+    reading = interpreter.generate_mock_reading(f)
+    reading['luan_diem'] = [{'nhan_dinh': 'Một nhận định có điều kiện.', 'gioi_han': 'Cần kiểm tra tổ hợp.',
+                             'fact_ids': [fact['fact_id']], 'source_refs': fact['source_refs'][:1]}]
+    busy = Mock(status_code=503)
+    busy.json.return_value = {'error': {'message': 'busy'}}
+    ok = Mock(status_code=200)
+    ok.json.return_value = {'candidates': [{'finishReason': 'STOP', 'content': {'parts': [{'text': json.dumps(reading)}]}}]}
+    with patch.object(interpreter, 'GEMINI_API_KEY', 'test-secret'), \
+            patch.object(interpreter, 'HOROSCOPE_FALLBACK_MODELS', ('gemini-fallback',)), \
+            patch.object(interpreter, 'check_specificity', return_value=None), \
+            patch('requests.post', side_effect=[busy, ok]) as post:
+        actual = interpreter.interpret_horoscope(f, bridge.format_context_for_prompt(context), 'auto', context)
+    assert actual['_generation']['actual_provider'] == 'gemini'
+    assert actual['_generation']['model'] == 'gemini-fallback'
+    assert post.call_count == 2
+    assert 'gemini-fallback' in post.call_args_list[1].args[0]
 
 
 def test_forced_gemini_does_not_silently_substitute_mock():

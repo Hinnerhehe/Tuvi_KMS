@@ -79,7 +79,7 @@ def reading_events(req: HoroscopeRequest):
             }}
             return
 
-        yield progress('generation', f"Đã có {len(citations)} nguồn. Đang tạo bài đọc; AI chờ tối đa {HOROSCOPE_TIMEOUT_SECONDS:g} giây, không tự thử lại khi lỗi dịch vụ.")
+        yield progress('generation', f"Đã có {len(citations)} nguồn. Đang tạo bài đọc; AI chờ tối đa {HOROSCOPE_TIMEOUT_SECONDS:g} giây mỗi lượt, tự chuyển model dự phòng nếu quá tải.")
         mark = time.perf_counter()
         # Heartbeats report real elapsed time while the single bounded request runs.
         with ThreadPoolExecutor(max_workers=1) as pool:

@@ -57,7 +57,9 @@ sao gốc tại cung tiểu hạn vẫn là sao gốc, không phải lưu tinh.
 
 Luồng horoscope dùng `KMS_HOROSCOPE_MODEL` (mặc định `gemini-3.5-flash-lite`),
 `KMS_HOROSCOPE_TIMEOUT_SECONDS` (45 giây) và `KMS_HOROSCOPE_MAX_TOKENS` (2500).
-AI được gọi tối đa 2 lần: lần hai chỉ khi bài đầu thiếu dữ kiện riêng của lá số/năm.
+Đặt `KMS_HOROSCOPE_FALLBACK_MODELS` (phân tách bằng dấu phẩy) để thử model kế tiếp
+khi model chính quá tải/timeout/lỗi tạm thời, trước khi lùi về bản dữ kiện.
+Mỗi model được gọi tối đa 2 lần: lần hai chỉ khi bài đầu thiếu dữ kiện riêng của lá số/năm.
 UI nhận tiến độ mỗi giây và dữ kiện trước bài đọc.
 Bài AI thành công được cache theo lá số + năm + model + ngữ cảnh; bấm lại cùng input
 sẽ trả gần như tức thì (bỏ qua lời gọi Gemini). Cache không lưu bài lỗi/fallback.

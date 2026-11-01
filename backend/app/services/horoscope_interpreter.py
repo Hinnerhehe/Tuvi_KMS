@@ -12,7 +12,7 @@ import requests
 
 from backend.app.core.config import (
     GEMINI_API_KEY, HOROSCOPE_MODEL, HOROSCOPE_TIMEOUT_SECONDS, HOROSCOPE_MAX_TOKENS,
-    LLM_TEMPERATURE,
+    HOROSCOPE_FALLBACK_MODELS, LLM_TEMPERATURE,
 )
 from backend.app.services.horoscope_analysis import build_star_facts, palace_summary, strip_accents
 
@@ -65,6 +65,21 @@ ERROR_MESSAGES = {
     'provider_error': 'Gemini trả lỗi dịch vụ. Chưa tạo được bài AI.',
     'invalid_request': 'Gemini không chấp nhận cấu hình yêu cầu (400).',
 }
+
+# Lỗi có thể do model quá tải/trục trặc tạm thời: thử model dự phòng trước khi lùi về bản dữ kiện.
+MODEL_FALLBACK_CODES = frozenset({
+    'busy', 'timeout', 'network', 'provider_error', 'model_not_found',
+    'invalid_response', 'incomplete_response',
+})
+
+
+def _model_chain() -> list[str]:
+    """Model chính trước, kế đến các model dự phòng đã cấu hình (không trùng lặp)."""
+    chain = [HOROSCOPE_MODEL]
+    for model in HOROSCOPE_FALLBACK_MODELS:
+        if model not in chain:
+            chain.append(model)
+    return chain
 
 
 def response_schema() -> dict:
@@ -244,9 +259,10 @@ def generate_mock_reading(features: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _request_gemini(prompt_text: str, key: str) -> dict[str, Any]:
+def _request_gemini(prompt_text: str, key: str, model: str = HOROSCOPE_MODEL) -> dict[str, Any]:
+    model_id = model.removeprefix('models/')
     response = requests.post(
-        f"https://generativelanguage.googleapis.com/v1beta/models/{HOROSCOPE_MODEL.removeprefix('models/')}:generateContent",
+        f"https://generativelanguage.googleapis.com/v1beta/models/{model_id}:generateContent",
         headers={'x-goog-api-key': key},
         json={'systemInstruction': {'parts': [{'text': HOROSCOPE_SYSTEM_PROMPT}]},
               'contents': [{'parts': [{'text': prompt_text}]}],
@@ -270,48 +286,61 @@ def interpret_horoscope(features: dict[str, Any], formatted_context: str, provid
     facts = build_star_facts(features, context)
     start = time.perf_counter()
     attempts = 0
-    def fallback(reason):
+    chain = _model_chain()
+
+    def fallback(reason, model):
         reading = generate_mock_reading(features)
         reading['_generation'] = {'actual_provider': 'mock', 'is_mock': True, 'reason': reason,
-                                  'message': ERROR_MESSAGES.get(reason, ''), 'model': HOROSCOPE_MODEL,
+                                  'message': ERROR_MESSAGES.get(reason, ''), 'model': model,
                                   'attempts': attempts, 'specificity_low': False,
                                   'elapsed_ms': round((time.perf_counter() - start) * 1000, 1)}
         return reading
+
     if provider == 'mock':
-        return fallback('requested')
+        return fallback('requested', chain[0])
     key = GEMINI_API_KEY or os.getenv('GEMINI_API_KEY', '')
+    last_model = chain[0]
+    error = None
     try:
         if not key:
             raise HoroscopeGenerationError('missing_key')
-        attempts = 1
         user_prompt = build_horoscope_user_prompt(features, formatted_context, facts)
-        reading = _request_gemini(user_prompt, key)
-        validate_reading(reading, facts, context)
-        problem = check_specificity(reading, features, context)
-        if problem:
-            attempts = 2
-            annual = features.get('nam_xem') or {}
-            extra = (
-                f"\nBỔ SUNG BẮT BUỘC: {problem} Mỗi luận điểm phải dẫn fact_id khác nhau; "
-                f"phần vận trình phải nhắc năm xem {annual.get('year', '')} ({annual.get('can_chi', '')})."
-            )
-            reading = _request_gemini(user_prompt + extra, key)
-            validate_reading(reading, facts, context)
-            problem = check_specificity(reading, features, context)
-        reading['_generation'] = {'actual_provider': 'gemini', 'is_mock': False, 'reason': None,
-                                  'model': HOROSCOPE_MODEL, 'attempts': attempts,
-                                  'specificity_low': bool(problem), 'specificity_reason': problem,
-                                  'elapsed_ms': round((time.perf_counter() - start) * 1000, 1)}
-        return reading
-    except requests.Timeout:
-        error = HoroscopeGenerationError('timeout')
-    except requests.RequestException:
-        error = HoroscopeGenerationError('network')
+        for index, model in enumerate(chain):
+            last_model = model
+            attempts += 1
+            try:
+                reading = _request_gemini(user_prompt, key, model)
+                validate_reading(reading, facts, context)
+                problem = check_specificity(reading, features, context)
+                if problem:
+                    attempts += 1
+                    annual = features.get('nam_xem') or {}
+                    extra = (
+                        f"\nBỔ SUNG BẮT BUỘC: {problem} Mỗi luận điểm phải dẫn fact_id khác nhau; "
+                        f"phần vận trình phải nhắc năm xem {annual.get('year', '')} ({annual.get('can_chi', '')})."
+                    )
+                    reading = _request_gemini(user_prompt + extra, key, model)
+                    validate_reading(reading, facts, context)
+                    problem = check_specificity(reading, features, context)
+                reading['_generation'] = {'actual_provider': 'gemini', 'is_mock': False, 'reason': None,
+                                          'model': model, 'primary_model': chain[0], 'attempts': attempts,
+                                          'specificity_low': bool(problem), 'specificity_reason': problem,
+                                          'elapsed_ms': round((time.perf_counter() - start) * 1000, 1)}
+                return reading
+            except requests.Timeout:
+                error = HoroscopeGenerationError('timeout')
+            except requests.RequestException:
+                error = HoroscopeGenerationError('network')
+            except HoroscopeGenerationError as exc:
+                error = exc
+            except (ValueError, KeyError, TypeError):
+                error = HoroscopeGenerationError('invalid_response')
+            if index == len(chain) - 1 or error.code not in MODEL_FALLBACK_CODES:
+                raise error
+            logger.warning('horoscope_model_fallback from=%s to=%s code=%s', model, chain[index + 1], error.code)
     except HoroscopeGenerationError as exc:
         error = exc
-    except (ValueError, KeyError, TypeError):
-        error = HoroscopeGenerationError('invalid_response')
-    logger.warning('horoscope_generation code=%s model=%s elapsed_ms=%.1f', error.code, HOROSCOPE_MODEL, (time.perf_counter() - start) * 1000)
+    logger.warning('horoscope_generation code=%s model=%s elapsed_ms=%.1f', error.code, last_model, (time.perf_counter() - start) * 1000)
     if provider == 'gemini':
         raise error
-    return fallback(error.code)
+    return fallback(error.code, last_model)
