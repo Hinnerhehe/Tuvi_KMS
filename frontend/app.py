@@ -18,7 +18,7 @@ from typing import Any
 import requests
 import streamlit as st
 
-API_BASE = os.getenv("KMS_API_BASE", "http://localhost:8000")
+API_BASE = os.getenv("KMS_API_BASE", "https://tuvi-kms-backend.onrender.com").rstrip("/")
 TIMEOUT = 120
 
 BOOK_TITLES = {

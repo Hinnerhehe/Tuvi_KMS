@@ -28,7 +28,7 @@ for weight in (400, 500, 600):
     font_faces += f"@font-face{{font-family:'IBM Plex Sans';font-weight:{weight};font-style:normal;font-display:swap;src:url(data:font/ttf;base64,{encoded}) format('truetype');}}"
 st.markdown(f"<style>{font_faces}{style}</style>", unsafe_allow_html=True)
 
-API_BASE = os.getenv("KMS_API_BASE", "http://127.0.0.1:8000").rstrip("/")
+API_BASE = os.getenv("KMS_API_BASE", "https://tuvi-kms-backend.onrender.com").rstrip("/")
 year_now = datetime.now(ZoneInfo("Asia/Bangkok")).year
 
 with st.sidebar:
