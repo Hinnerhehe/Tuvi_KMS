@@ -15,6 +15,14 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+import importlib
+for _mod in ('frontend.horoscope_view', 'frontend.horoscope_transport', 'frontend.laso_renderer'):
+    if _mod in sys.modules:
+        try:
+            importlib.reload(sys.modules[_mod])
+        except Exception:
+            pass
+
 from frontend.horoscope_view import (ASK_LABELS, ASK_SUGGESTIONS, BOOKS, HOURS, TOPICS, content,
                                     palace_preview, panel, text, topic_panel, validate_birth_date,
                                     annual_panel, star_table)
