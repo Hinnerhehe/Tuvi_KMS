@@ -194,3 +194,28 @@ def chat_ask(req: ChatAskRequest) -> ChatAskResponse:
         book_codes=req.book_codes,
         request_id=req.request_id,
     )
+
+
+# ---------------------------------------------------------------------------
+# Tử Vi Horoscope — endpoint mới, tách biệt với KMS RAG pipeline
+# ---------------------------------------------------------------------------
+from backend.app.schemas.horoscope import HoroscopeRequest  # noqa: E402
+
+
+@app.post("/api/v1/horoscope/read", summary="Xem lá số tử vi", tags=["Horoscope"])
+def horoscope_read(req: HoroscopeRequest) -> dict:
+    from backend.app.services.horoscope_service import read_horoscope
+    return read_horoscope(req)
+
+
+@app.post("/api/v1/horoscope/read-stream", tags=["Horoscope"])
+def horoscope_read_stream(req: HoroscopeRequest):
+    import json
+    from fastapi.responses import StreamingResponse
+    from backend.app.services.horoscope_service import reading_events
+
+    def stream():
+        for event in reading_events(req):
+            yield json.dumps(event, ensure_ascii=False) + '\n'
+    return StreamingResponse(stream(), media_type='application/x-ndjson',
+                             headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'})

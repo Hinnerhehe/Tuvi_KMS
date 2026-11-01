@@ -40,7 +40,10 @@ htmlcov/
 
 # Database & Vector DB local storage
 DB/
+!backend/app/db/
 *.db
+*.db-shm
+*.db-wal
 *.sqlite
 *.sqlite3
 qdrant_storage/

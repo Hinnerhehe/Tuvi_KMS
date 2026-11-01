@@ -42,6 +42,12 @@ LLM_MAX_TOKENS = int(os.getenv("KMS_LLM_MAX_TOKENS", "2048"))
 LLM_TEMPERATURE = float(os.getenv("KMS_LLM_TEMPERATURE", "0.0"))
 ENABLE_QUERY_CACHE = os.getenv("KMS_ENABLE_QUERY_CACHE", "true").lower() in ("true", "1", "yes")
 
+# --- horoscope ---
+HOROSCOPE_MODEL = os.getenv("KMS_HOROSCOPE_MODEL", "gemini-3.5-flash-lite")
+HOROSCOPE_TIMEOUT_SECONDS = int(os.getenv("KMS_HOROSCOPE_TIMEOUT_SECONDS", "45"))
+HOROSCOPE_MAX_TOKENS = int(os.getenv("KMS_HOROSCOPE_MAX_TOKENS", "2500"))
+ENABLE_HOROSCOPE_CACHE = os.getenv("KMS_ENABLE_HOROSCOPE_CACHE", "true").lower() in ("true", "1", "yes")
+
 # --- trích dẫn ---
 EXCERPT_MAX_CHARS = int(os.getenv("KMS_EXCERPT_MAX_CHARS", "300"))
 

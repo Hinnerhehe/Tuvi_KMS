@@ -1,8 +1,8 @@
 {
-  "embedding_model": "BAAI/bge-m3",
-  "embedding_dim": null,
+  "embedding_model": "gemini-embedding-001",
+  "embedding_dim": 1024,
   "vector_store": "qdrant",
-  "vectors_indexed": 0,
+  "vectors_indexed": 30,
   "chunking_version": "v0.1",
   "chunks_per_book": {
     "NPL": 2191,
@@ -11,5 +11,7 @@
   },
   "chunks_built": 4350,
   "knowledge_total": 10456,
-  "indexed_at": "2026-10-22T15:46:32.347875+00:00"
+  "indexed_at": "2026-10-22T15:46:32.347875+00:00",
+  "embedding_provider": "gemini",
+  "embedded_at": "2026-10-27T13:42:04.533360+00:00"
 }
