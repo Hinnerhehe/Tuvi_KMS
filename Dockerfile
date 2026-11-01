@@ -2,6 +2,9 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app
+
 # Install system utilities
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl ca-certificates \
@@ -11,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application source code
+# Copy application source code & data
 COPY . .
 
 EXPOSE 8000

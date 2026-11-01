@@ -4,6 +4,9 @@ uvicorn[standard]>=0.30.0
 pydantic>=2.8.0
 python-multipart>=0.0.9
 
+# Database & ORM
+sqlalchemy>=2.0.0
+
 # Streamlit UI
 streamlit>=1.38.0
 
@@ -20,6 +23,7 @@ google-generativeai>=0.8.0
 numpy>=1.26.0
 pandas>=2.2.0
 qdrant-client>=1.10.0
+sentence-transformers>=3.0.0
 
 # Date & Utilities
 python-dateutil>=2.9.0

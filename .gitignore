@@ -42,8 +42,11 @@ htmlcov/
 DB/
 !backend/app/db/
 *.db
-*.db-shm
-*.db-wal
+!data/processed/kms.db
+*.db
+!data/processed/kms.db-shm
+*.db
+!data/processed/kms.db-wal
 *.sqlite
 *.sqlite3
 qdrant_storage/
