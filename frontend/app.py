@@ -18,7 +18,20 @@ from typing import Any
 import requests
 import streamlit as st
 
-API_BASE = os.getenv("KMS_API_BASE", "https://tuvi-kms-backend.onrender.com").rstrip("/")
+def _resolve_api_base() -> str:
+    env_url = os.getenv("KMS_API_BASE")
+    if env_url:
+        return env_url.rstrip("/")
+    try:
+        r = requests.get("http://127.0.0.1:8000/api/v1/health", timeout=0.3)
+        if r.status_code == 200:
+            return "http://127.0.0.1:8000"
+    except Exception:
+        pass
+    return "https://tuvi-kms-backend.onrender.com"
+
+
+API_BASE = _resolve_api_base()
 TIMEOUT = 120
 
 BOOK_TITLES = {

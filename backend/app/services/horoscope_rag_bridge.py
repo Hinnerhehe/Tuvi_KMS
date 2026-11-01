@@ -15,6 +15,7 @@ TOPIC_TITLES = {
     'ban_menh': 'BẢN MỆNH & TÍNH CÁCH CỐT LÕI', 'su_nghiep': 'CÔNG DANH & SỰ NGHIỆP',
     'tai_chinh': 'TÀI CHÍNH & TIỀN BẠC', 'tinh_cam': 'TÌNH CẢM & GIA ĐẠO',
     'van_han': 'VẬN HẠN HIỆN TẠI (ĐẠI HẠN VÀ TIỂU HẠN NĂM)',
+    'gia_dinh': 'GIA ĐÌNH & QUAN HỆ (PHỤ MẪU, HUYNH ĐỆ, TỬ TỨC)',
 }
 
 
@@ -70,6 +71,9 @@ def generate_horoscope_queries(features: dict[str, Any]) -> dict[str, list[str]]
     for key, name in [('ban_menh', 'Mệnh'), ('su_nghiep', 'Quan lộc'), ('tai_chinh', 'Tài bạch'), ('tinh_cam', 'Phu thê')]:
         if name.casefold() in palaces:
             topics[key] = palace_queries(palaces[name.casefold()])
+    for name in ('Phụ mẫu', 'Huynh đệ', 'Tử tức'):
+        if name.casefold() in palaces:
+            topics['gia_dinh'].extend(palace_queries(palaces[name.casefold()]))
     annual = features.get('nam_xem', {}).get('tieu_han')
     if annual:
         topics['van_han'].extend(palace_queries(annual))

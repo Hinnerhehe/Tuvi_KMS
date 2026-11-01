@@ -13,3 +13,4 @@ import runpy
 
 target = ROOT / "frontend" / "horoscope_ui.py"
 runpy.run_path(str(target), run_name="__main__")
+

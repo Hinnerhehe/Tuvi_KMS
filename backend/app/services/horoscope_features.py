@@ -543,6 +543,7 @@ def extract_horoscope_features(
             "cung_than": than_cung.get("chuan_ten", ""),
             "cung_than_so": cung_than_so,
         },
+        "cung_domains": dict(CUNG_DOMAIN),
         "menh_cuc": menh_cuc,
         "star_group": star_group,
         "menh_stars": menh_stars_cat,

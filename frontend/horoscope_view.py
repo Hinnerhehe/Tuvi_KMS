@@ -6,6 +6,19 @@ TOPICS = {
     "su_nghiep": "Sự nghiệp", "tai_chinh": "Tài chính",
     "tinh_cam": "Tình cảm", "van_han_hien_tai": "Vận trình",
 }
+# Câu hỏi gợi ý cho ô "Hỏi nhanh có đáp · kèm nguồn sách" trong từng tab chủ đề.
+ASK_SUGGESTIONS = {
+    "su_nghiep": ["Năm nay có cơ hội đổi việc không?", "Nên theo hướng nào?"],
+    "tai_chinh": ["Có giàu không?", "Năm nay nên chú ý khoản nào?"],
+    "tinh_cam": ["Năm nay có người tìm hiểu không?", "Kiểu người nào hợp với mình?"],
+    "van_han_hien_tai": ["Năm nay nên chú ý điều gì?", "Cần chuẩn bị gì cho năm tới?"],
+}
+# Nhãn mức căn cứ của câu trả lời hỏi nhanh.
+ASK_LABELS = {
+    "dau_hieu_ro": "Dấu hiệu rõ theo dữ kiện & nguồn",
+    "dau_hieu_yeu": "Dấu hiệu yếu · cần cân nhắc",
+    "chua_du_can_cu": "Chưa đủ căn cứ từ nguồn đã lấy",
+}
 BOOKS = {"NPL": "Nguyễn Phát Lộc", "BD": "Tử Vi Ứng Dụng — Bửu Đình", "DAU": "Tử Vi Đẩu Số Toàn Thư"}
 HOURS = ["Tý · 23:00–01:00", "Sửu · 01:00–03:00", "Dần · 03:00–05:00", "Mão · 05:00–07:00",
          "Thìn · 07:00–09:00", "Tỵ · 09:00–11:00", "Ngọ · 11:00–13:00", "Mùi · 13:00–15:00",

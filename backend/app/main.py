@@ -199,13 +199,19 @@ def chat_ask(req: ChatAskRequest) -> ChatAskResponse:
 # ---------------------------------------------------------------------------
 # Tử Vi Horoscope — endpoint mới, tách biệt với KMS RAG pipeline
 # ---------------------------------------------------------------------------
-from backend.app.schemas.horoscope import HoroscopeRequest  # noqa: E402
+from backend.app.schemas.horoscope import HoroscopeAskRequest, HoroscopeRequest  # noqa: E402
 
 
 @app.post("/api/v1/horoscope/read", summary="Xem lá số tử vi", tags=["Horoscope"])
 def horoscope_read(req: HoroscopeRequest) -> dict:
     from backend.app.services.horoscope_service import read_horoscope
     return read_horoscope(req)
+
+
+@app.post("/api/v1/horoscope/ask", summary="Hỏi nhanh theo chủ đề, có nguồn sách", tags=["Horoscope"])
+def horoscope_ask(req: HoroscopeAskRequest) -> dict:
+    from backend.app.services.horoscope_ask import ask_horoscope
+    return ask_horoscope(req)
 
 
 @app.post("/api/v1/horoscope/read-stream", tags=["Horoscope"])

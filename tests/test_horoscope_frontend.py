@@ -72,7 +72,7 @@ def test_ui_submit_validation_report_toggles_and_transport_error():
     app.number_input(key="birth_day").set_value(31)
     app.number_input(key="birth_month").set_value(2)
     with patch("requests.post") as post:
-        app.button[0].click().run()
+        app.sidebar.button[0].click().run()
         post.assert_not_called()
     assert app.error
 
@@ -90,7 +90,7 @@ def test_ui_submit_validation_report_toggles_and_transport_error():
         json.dumps({'event': 'result', 'report': payload}),
     ])
     with patch("requests.post", return_value=response) as post:
-        app.button[0].click().run()
+        app.sidebar.button[0].click().run()
         assert post.call_args.kwargs["json"]["ho_ten"] == "Lê An"
     assert not app.exception
     assert any("Lê An" in item.value for item in app.markdown)
@@ -102,7 +102,7 @@ def test_ui_submit_validation_report_toggles_and_transport_error():
         post.assert_not_called()
     assert not app.exception
     with patch("requests.post", side_effect=requests.ConnectionError("offline")):
-        app.button[0].click().run()
+        app.sidebar.button[0].click().run()
     assert app.error
     assert not app.exception
     assert any("Lê An" in item.value for item in app.markdown)  # last successful report survives
@@ -123,7 +123,7 @@ def _submit_mock_report(app, target_year: int | None = None):
     with patch("requests.post", return_value=response):
         if target_year is not None:
             app.number_input(key="target_year").set_value(target_year)
-        app.button[0].click().run()
+        app.sidebar.button[0].click().run()
     assert not app.exception
     return payload
 

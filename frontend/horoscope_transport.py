@@ -3,6 +3,17 @@ import json
 import requests
 
 
+def ask_horoscope(api_base: str, payload: dict):
+    """Hỏi nhanh theo chủ đề (/api/v1/horoscope/ask); trả JSON hoặc raise."""
+    response = requests.post(f'{api_base}/api/v1/horoscope/ask', json=payload,
+                             timeout=(5, 75))
+    response.raise_for_status()
+    data = response.json()
+    if not isinstance(data, dict) or data.get('status') != 'ok':
+        raise ValueError(data.get('detail') or data.get('message') or 'Dịch vụ chưa trả được câu trả lời.')
+    return data
+
+
 def reading_events(api_base: str, payload: dict):
     response = requests.post(f'{api_base}/api/v1/horoscope/read-stream', json=payload,
                              stream=True, timeout=(5, 75))

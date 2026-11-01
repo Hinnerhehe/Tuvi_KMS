@@ -15,10 +15,11 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from frontend.horoscope_view import (BOOKS, HOURS, TOPICS, content, palace_preview, panel,
-                                    text, topic_panel, validate_birth_date, annual_panel, star_table)
+from frontend.horoscope_view import (ASK_LABELS, ASK_SUGGESTIONS, BOOKS, HOURS, TOPICS, content,
+                                    palace_preview, panel, text, topic_panel, validate_birth_date,
+                                    annual_panel, star_table)
 from frontend.laso_renderer import luoi_html
-from frontend.horoscope_transport import reading_events
+from frontend.horoscope_transport import ask_horoscope, reading_events
 
 st.set_page_config(page_title="Tử Vi · Bản đồ bản thân", layout="wide", initial_sidebar_state="auto")
 style = (ROOT / "frontend/assets/horoscope.css").read_text(encoding="utf-8")
@@ -28,8 +29,77 @@ for weight in (400, 500, 600):
     font_faces += f"@font-face{{font-family:'IBM Plex Sans';font-weight:{weight};font-style:normal;font-display:swap;src:url(data:font/ttf;base64,{encoded}) format('truetype');}}"
 st.markdown(f"<style>{font_faces}{style}</style>", unsafe_allow_html=True)
 
-API_BASE = os.getenv("KMS_API_BASE", "https://tuvi-kms-backend.onrender.com").rstrip("/")
+def _resolve_api_base() -> str:
+    env_url = os.getenv("KMS_API_BASE")
+    if env_url:
+        return env_url.rstrip("/")
+    try:
+        r = requests.get("http://127.0.0.1:8000/api/v1/health", timeout=0.3)
+        if r.status_code == 200:
+            return "http://127.0.0.1:8000"
+    except Exception:
+        pass
+    return "https://tuvi-kms-backend.onrender.com"
+
+
+API_BASE = _resolve_api_base()
 year_now = datetime.now(ZoneInfo("Asia/Bangkok")).year
+
+
+def _render_ask_answer(saved: dict) -> None:
+    result = saved["result"]
+    level = ASK_LABELS.get(result.get("muc_do_can_cu"), "—")
+    if result.get("muc_do_can_cu") == "dau_hieu_ro":
+        st.success(level)
+    elif result.get("muc_do_can_cu") == "dau_hieu_yeu":
+        st.warning(level)
+    else:
+        st.info(level)
+    body = f'<p>{text(result.get("tra_loi"))}</p>'
+    if result.get("giai_thich_thun_viet"):
+        body += f'<p class="muted">{text(result.get("giai_thich_thun_viet"))}</p>'
+    if result.get("gioi_han"):
+        body += f'<p class="muted">Giới hạn: {text(result.get("gioi_han"))}</p>'
+    st.markdown(body, unsafe_allow_html=True)
+    meta = result.get("meta", {})
+    mode_note = " · Chế độ chỉ dữ kiện lá số (không dùng AI)" if meta.get("is_mock") else ""
+    st.caption(f"Câu hỏi: “{text(saved.get('question'))}” · {text(saved.get('time', ''))}{mode_note} · Trích dẫn chưa kiểm duyệt thủ công.")
+    if result.get("citations"):
+        with st.expander(f"Nguồn sách đã đối chiếu ({len(result['citations'])})"):
+            for c in result["citations"]:
+                st.caption(f'[{c.get("ref_id")}] {c.get("book_title") or c.get("book_code", "Nguồn")} · {c.get("page_label") or "Trang không xác định"}')
+                st.text(c.get("excerpt") or "Chưa có đoạn trích.")
+
+
+def _ask_box(key: str, snapshot: dict, mode: str) -> None:
+    """Ô "Hỏi nhanh có đáp · kèm nguồn sách" trong tab chủ đề; câu trả lời lưu theo chủ đề."""
+    st.markdown('<p class="muted"><strong>Hỏi nhanh có đáp · kèm nguồn sách</strong> — trả lời theo dữ kiện lá số và trích dẫn 3 sách nguồn; chưa kiểm duyệt thủ công.</p>', unsafe_allow_html=True)
+    for sug_index, suggestion in enumerate(ASK_SUGGESTIONS.get(key, [])):
+        if st.button(suggestion, key=f'ask_sug_{key}_{sug_index}'):
+            st.session_state[f'ask_q_{key}'] = suggestion
+    ask_input = st.text_input("Câu hỏi của bạn (tối đa 300 ký tự)", key=f'ask_q_{key}', max_chars=300,
+                              placeholder="VD: Năm nay có người tìm hiểu không?")
+    if st.button("Hỏi luận giải thông minh", key=f'ask_btn_{key}'):
+        question = str(ask_input).strip()
+        if question:
+            payload = {'ho_ten': snapshot.get('ho_ten', ''), 'ngay': snapshot['ngay'], 'thang': snapshot['thang'],
+                       'nam': snapshot['nam'], 'chi_gio': snapshot['chi_gio'], 'gioi_tinh': snapshot['gioi_tinh'],
+                       'duong_lich': snapshot['duong_lich'], 'target_year': snapshot.get('target_year'),
+                       'topic': key, 'question': question, 'provider': mode}
+            with st.spinner("Đang hỏi luận giải thông minh…"):
+                try:
+                    result = ask_horoscope(API_BASE, payload)
+                    st.session_state[f'ask_answer_{key}'] = {'question': question, 'result': result,
+                                                             'time': datetime.now(ZoneInfo("Asia/Bangkok")).strftime('%H:%M')}
+                except requests.Timeout:
+                    st.error("Kết nối đến dịch vụ hỏi đáp quá thời gian chờ. Thử lại sau.")
+                except requests.RequestException:
+                    st.error("Không kết nối được dịch vụ hỏi đáp. Báo cáo hiện có vẫn được giữ.")
+                except ValueError as exc:
+                    st.error(str(exc))
+    saved = st.session_state.get(f'ask_answer_{key}')
+    if saved:
+        _render_ask_answer(saved)
 
 with st.sidebar:
     st.markdown('<div class="brand"><span class="brand-mark" aria-hidden="true">田</span><strong>KMS Tử Vi</strong></div>', unsafe_allow_html=True)
@@ -48,7 +118,7 @@ with st.sidebar:
                                       help="Chọn năm Can Chi để xem tiểu hạn, vòng Thái Tuế và lưu Tứ Hóa. Đổi năm sẽ hiện nhắc tạo lại báo cáo.")
         priorities = st.pills("Chủ đề muốn đọc trước", list(TOPICS), selection_mode="multi", format_func=TOPICS.get, key="birth_topics",
                               help="Các chủ đề đã chọn được đặt trước trong báo cáo; tổng quan luôn được giữ lại.")
-        mode = st.selectbox("Bản luận giải", ["auto", "mock"], format_func=lambda v: "AI · tự động" if v == "auto" else "Dữ kiện lá số · không gọi AI", key="birth_provider")
+        mode = st.selectbox("Bản luận giải", ["auto", "mock"], format_func=lambda v: "Luận giải thông minh · tự động" if v == "auto" else "Chỉ dữ kiện lá số · không dùng AI", key="birth_provider")
     submitted = st.button("Tạo bản luận giải", type="primary", use_container_width=True)
     st.caption("Giờ sinh theo múi giờ Việt Nam (UTC+7). Với lịch âm, thuật toán hiện chưa hỗ trợ lựa chọn tháng nhuận.")
 
@@ -77,7 +147,7 @@ if submitted:
                     elif event.get('event') == 'prepared':
                         prepared = event['report']
                         with preview.container():
-                            st.caption(f"Đã lập xong 12 cung và lấy {len(prepared.get('citations', []))} nguồn. Đây là dữ kiện trước khi AI diễn giải.")
+                            st.caption(f"Đã lập xong 12 cung và lấy {len(prepared.get('citations', []))} nguồn. Đây là dữ kiện trước khi luận giải thông minh diễn giải.")
                             st.markdown(annual_panel(prepared.get('annual', {}), prepared.get('luu_nien')), unsafe_allow_html=True)
                     elif event.get('event') == 'result':
                         result = event['report']
@@ -120,12 +190,12 @@ else:
     snapshot = st.session_state["report_input"]
     is_mock = meta.get("is_mock")
     if is_mock:
-        reason = "Bạn đã chọn chế độ không gọi AI." if meta.get('reason') == 'requested' else meta.get('message', 'AI chưa trả được bài đọc hợp lệ.')
-        st.markdown('<p class="notice">Phân tích dữ kiện lá số · ' + text(reason) + ' Phần dưới mô tả sao/cung tính được; chưa phải luận giải của Gemini.</p>', unsafe_allow_html=True)
+        reason = "Bạn đã chọn chế độ chỉ dữ kiện lá số." if meta.get('reason') == 'requested' else meta.get('message', 'Luận giải thông minh chưa trả được bài hợp lệ.')
+        st.markdown('<p class="notice">Phân tích dữ kiện lá số · ' + text(reason) + ' Phần dưới mô tả sao/cung tính được; chưa phải bài luận giải thông minh.</p>', unsafe_allow_html=True)
     elif is_mock is None:
         st.markdown('<p class="notice">Dịch vụ chưa cung cấp thông tin xác nhận chế độ tạo bài.</p>', unsafe_allow_html=True)
     else:
-        st.caption("Bài tổng hợp bằng AI · Nội dung và nguồn trích dẫn chưa được kiểm duyệt thủ công.")
+        st.caption("Bài luận giải thông minh · Nội dung và nguồn trích dẫn chưa được kiểm duyệt thủ công.")
     if meta.get('specificity_low'):
         st.caption('Bài tổng hợp dựa trên ít dữ kiện riêng của lá số; xem mục Phân tích sao để đối chiếu.')
     st.markdown(f'<div class="report-heading"><h2>{text(report.get("ho_ten"))}</h2><span>{text(st.session_state["report_time"])}</span></div>'
@@ -156,6 +226,19 @@ else:
     for key, tab in zip(order, tabs):
         with tab:
             st.markdown(topic_panel(key, reading.get(key, {})), unsafe_allow_html=True)
+            _ask_box(key, snapshot, snapshot.get('provider', 'auto'))
+    if reading.get('ket_luan'):
+        st.subheader('Kết luận & phân tích sâu')
+        st.caption('Mỗi mục gồm nhận định chuyên môn và phần chuyển thuật ngữ sang nghĩa đời thường, kèm dữ kiện/nguồn đối chiếu.')
+        fact_map = {f['fact_id']: f for f in report.get('star_analysis', [])}
+        for index, point in enumerate(reading['ket_luan'], 1):
+            st.markdown(f'<p class="muted">Kết luận {index}</p>', unsafe_allow_html=True)
+            st.markdown(content(point.get('nhan_dinh')), unsafe_allow_html=True)
+            if point.get('giai_thich_thun_viet'):
+                st.markdown('<p class="muted"><strong>Giải nghĩa thuần Việt:</strong> ' + text(point.get('giai_thich_thun_viet')) + '</p>', unsafe_allow_html=True)
+            labels = [f"{fact_map[i]['sao']} tại {fact_map[i]['cung']} ({fact_map[i]['dia_chi']})" for i in point.get('fact_ids', []) if i in fact_map]
+            st.caption('Dữ kiện: ' + ('; '.join(labels) or '—') + ' · Nguồn: ' + (', '.join(f'[{r}]' for r in point.get('source_refs', [])) or '—'))
+            st.caption('Điều kiện / giới hạn: ' + point.get('gioi_han', 'Chưa xác minh thủ công.'))
     st.markdown(panel("Gợi ý để chiêm nghiệm", content(reading.get("loi_khuyen_hanh_dong"))), unsafe_allow_html=True)
     if reading.get('luan_diem'):
         st.subheader('Lập luận từ sao và nguồn sách')
@@ -210,7 +293,8 @@ else:
                 st.text(source.get("excerpt") or "Chưa có đoạn trích.")
     with st.expander('Thời gian xử lý và chế độ thực chạy'):
         timings = meta.get('timings_ms', {})
-        st.caption(f"Chế độ: {meta.get('actual_provider', '—')} · Model AI: {meta.get('model', '—')} · Số lần gọi AI: {meta.get('attempts', 0)} · Cache: {'trúng' if meta.get('cached') else 'chưa có'}")
+        provider_label = {'gemini': 'Luận giải thông minh (online)', 'mock': 'Chỉ dữ kiện lá số (không dùng AI)'}.get(meta.get('actual_provider'), meta.get('actual_provider', '—'))
+        st.caption(f"Chế độ: {provider_label} · Số lần xử lý: {meta.get('attempts', 0)} · Cache: {'trúng' if meta.get('cached') else 'chưa có'}")
         st.caption(' · '.join(f"{label}: {timings.get(key, 0) / 1000:.2f}s" for key, label in [('chart', 'Lập lá số'), ('retrieval', 'Lấy nguồn'), ('generation', 'Tạo bài'), ('total', 'Tổng')]))
 
 st.markdown('<footer>Tử Vi là một hệ thống văn hóa truyền thống để tham khảo và chiêm nghiệm. Luận giải không quyết định số phận và không thay thế tư vấn y khoa, pháp lý hay tài chính chuyên nghiệp.</footer>', unsafe_allow_html=True)

@@ -35,6 +35,12 @@ Chỉ trả JSON theo schema, ngắn gọn: mỗi trường 1–2 câu. Tạo 3�
 năm được chọn và yếu tố cần lưu ý nếu có nguồn; không ép kết luận khi thiếu nguồn.
 Mỗi luận điểm phải dẫn fact_id của sao/cung cụ thể trong DỮ KIỆN; phần vận trình phải nhắc
 đúng năm xem và can chi của năm. Không viết câu chung áp dụng cho mọi lá số.
+Kèm mục ket_luan (2–4 kết luận sâu, mỗi mục 2–4 câu): "nhan_dinh" là nhận định chuyên môn;
+"giai_thich_thun_viet" phá toái mọi thuật ngữ (tên cung theo từ điển nghĩa cung trong DỮ KIỆN,
+trạng thái sao, điều kiện Tuần/Triệt, Tứ Hóa) sang nghĩa thuần Việt đời thường, nội dung bám
+nguồn đã trích dẫn, không bổ sung kiến thức ngoài nguồn; thiếu điều kiện thì ghi rõ vào
+"gioi_han", không khẳng định. Mỗi mục dẫn fact_ids và source_refs (source_refs được phép rỗng
+nếu mục ghi 'Chưa đủ căn cứ từ nguồn đã lấy' trong gioi_han).
 """
 
 READING_FIELDS = {
@@ -49,21 +55,21 @@ READING_FIELDS = {
 class HoroscopeGenerationError(RuntimeError):
     def __init__(self, code: str):
         self.code = code
-        super().__init__(ERROR_MESSAGES.get(code, 'Dịch vụ AI chưa trả được kết quả hợp lệ.'))
+        super().__init__(ERROR_MESSAGES.get(code, 'Dịch vụ luận giải thông minh chưa trả được kết quả hợp lệ.'))
 
 
 ERROR_MESSAGES = {
-    'missing_key': 'Chưa cấu hình khóa Gemini.',
-    'busy': 'Gemini đang quá tải (503). Hãy thử lại sau hoặc chọn bản phân tích dữ kiện.',
-    'quota': 'Gemini báo vượt giới hạn sử dụng (429). Kiểm tra quota của khóa API.',
-    'invalid_key': 'Gemini từ chối khóa hoặc quyền truy cập (401/403).',
-    'model_not_found': 'Model Gemini không khả dụng (404). Kiểm tra KMS_HOROSCOPE_MODEL.',
-    'timeout': 'Gemini vượt thời hạn chờ đã cấu hình; hệ thống đã dừng chờ và không thử lại tự động.',
-    'network': 'Không kết nối được Gemini. Kiểm tra mạng hoặc proxy.',
-    'invalid_response': 'AI trả nội dung thiếu cấu trúc hoặc dẫn chứng không hợp lệ.',
-    'incomplete_response': 'AI chưa trả trọn bài hoặc nội dung bị chặn. Không hiển thị bài chưa hoàn chỉnh.',
-    'provider_error': 'Gemini trả lỗi dịch vụ. Chưa tạo được bài AI.',
-    'invalid_request': 'Gemini không chấp nhận cấu hình yêu cầu (400).',
+    'missing_key': 'Chưa cấu hình khóa dịch vụ luận giải.',
+    'busy': 'Dịch vụ luận giải thông minh đang quá tải (503). Hãy thử lại sau hoặc chọn bản phân tích dữ kiện.',
+    'quota': 'Dịch vụ luận giải thông minh báo vượt giới hạn sử dụng (429). Kiểm tra quota của khóa API.',
+    'invalid_key': 'Dịch vụ luận giải từ chối khóa hoặc quyền truy cập (401/403).',
+    'model_not_found': 'Model luận giải không khả dụng (404). Kiểm tra KMS_HOROSCOPE_MODEL.',
+    'timeout': 'Luận giải thông minh vượt thời hạn chờ đã cấu hình; hệ thống đã dừng chờ và không thử lại tự động.',
+    'network': 'Không kết nối được dịch vụ luận giải thông minh. Kiểm tra mạng hoặc proxy.',
+    'invalid_response': 'Luận giải thông minh trả nội dung thiếu cấu trúc hoặc dẫn chứng không hợp lệ.',
+    'incomplete_response': 'Luận giải thông minh chưa trả trọn bài hoặc nội dung bị chặn. Không hiển thị bài chưa hoàn chỉnh.',
+    'provider_error': 'Dịch vụ luận giải trả lỗi. Chưa tạo được bài luận giải.',
+    'invalid_request': 'Dịch vụ luận giải không chấp nhận cấu hình yêu cầu (400).',
 }
 
 # Lỗi có thể do model quá tải/trục trặc tạm thời: thử model dự phòng trước khi lùi về bản dữ kiện.
@@ -95,11 +101,19 @@ def response_schema() -> dict:
             'source_refs': {'type': 'array', 'items': {'type': 'integer'}},
         }, 'required': ['nhan_dinh', 'gioi_han', 'fact_ids', 'source_refs'],
     }}
+    properties['ket_luan'] = {'type': 'array', 'maxItems': 4, 'items': {
+        'type': 'object', 'properties': {
+            'nhan_dinh': {'type': 'string'}, 'giai_thich_thun_viet': {'type': 'string'},
+            'gioi_han': {'type': 'string'},
+            'fact_ids': {'type': 'array', 'items': {'type': 'string'}},
+            'source_refs': {'type': 'array', 'items': {'type': 'integer'}},
+        }, 'required': ['nhan_dinh', 'giai_thich_thun_viet', 'gioi_han', 'fact_ids', 'source_refs'],
+    }}
     return {'type': 'object', 'properties': properties, 'required': list(properties)}
 
 
 PROMPT_KEYS = (
-    'thong_tin_co_ban', 'menh_cuc', 'star_group', 'dai_han_hien_tai', 'tu_hoa',
+    'thong_tin_co_ban', 'cung_domains', 'menh_cuc', 'star_group', 'dai_han_hien_tai', 'tu_hoa',
     'cung_chinh', 'nam_xem', 'luu_nien', 'tam_phuong_tu_chinh_menh',
 )
 
@@ -191,6 +205,25 @@ def validate_reading(reading: dict, facts: list, context: dict) -> None:
         linked = {r for i in ids for r in fact_map[i]['source_refs']}
         if not set(refs) <= linked or not all(isinstance(point.get(k), str) and point[k].strip() for k in ['nhan_dinh', 'gioi_han']):
             raise HoroscopeGenerationError('invalid_response')
+    deep_points = reading.get('ket_luan')
+    if deep_points is None:
+        deep_points = []
+    if not isinstance(deep_points, list) or len(deep_points) > 4:
+        raise HoroscopeGenerationError('invalid_response')
+    for point in deep_points:
+        if not isinstance(point, dict):
+            raise HoroscopeGenerationError('invalid_response')
+        ids, refs = point.get('fact_ids'), point.get('source_refs')
+        if not isinstance(ids, list) or not ids or not all(isinstance(i, str) and i in fact_map for i in ids):
+            raise HoroscopeGenerationError('invalid_response')
+        if not isinstance(refs, list) or not all(type(r) is int and r in allowed for r in refs):
+            raise HoroscopeGenerationError('invalid_response')
+        if refs:
+            linked = {r for i in ids for r in fact_map[i]['source_refs']}
+            if not set(refs) <= linked:
+                raise HoroscopeGenerationError('invalid_response')
+        if not all(isinstance(point.get(k), str) and point[k].strip() for k in ['nhan_dinh', 'giai_thich_thun_viet', 'gioi_han']):
+            raise HoroscopeGenerationError('invalid_response')
 
 
 def check_specificity(reading: dict, features: dict[str, Any], context: dict | None = None) -> str | None:
@@ -222,10 +255,12 @@ def check_specificity(reading: dict, features: dict[str, Any], context: dict | N
     return None
 
 
-def generate_mock_reading(features: dict[str, Any]) -> dict[str, Any]:
+def generate_mock_reading(features: dict[str, Any], context: dict | None = None) -> dict[str, Any]:
     """Offline report of actual chart facts. Does not pretend to infer a person's future."""
     basic = features.get('thong_tin_co_ban', {})
     palaces = {p['ten'].casefold(): p for p in features.get('palaces', [])}
+    domains = features.get('cung_domains') or {}
+    facts = build_star_facts(features, context or {})
     def desc(name):
         return palace_summary(palaces.get(name.casefold()))
     def risk(name):
@@ -235,6 +270,28 @@ def generate_mock_reading(features: dict[str, Any]) -> dict[str, Any]:
     annual = features.get('nam_xem', {})
     dh = features.get('dai_han_hien_tai') or {}
     period = f"Năm {annual.get('year', '—')} {annual.get('can_chi', '')}; đại hạn {dh.get('tu_tuoi', '—')}–{dh.get('den_tuoi', '—')} tuổi tại {dh.get('cung_ten', '—')}."
+
+    def palace_point(name: str) -> dict | None:
+        p = palaces.get(name.casefold())
+        if not p:
+            return None
+        ten = p.get('ten', name)
+        chinh = ', '.join(f"{s['ten']} ({s.get('dac_tinh', '—')})" for s in p.get('chinh_tinh', [])) or 'Vô chính diệu'
+        risk_names = ', '.join(s['ten'] for s in p.get('risk_stars', []))
+        ids = [f['fact_id'] for f in facts if f['cung'].casefold() == ten.casefold()][:6]
+        refs = sorted({r for f in facts if f['cung'].casefold() == ten.casefold() for r in f['source_refs']})[:4]
+        nhan = f"Cung {ten} tại {p.get('chuan_ten', '—')}: chính tinh {chinh}."
+        if risk_names:
+            nhan += f" Sao cần lưu ý: {risk_names}."
+        domain = domains.get(ten, '')
+        giai = (domain + '. ' if domain else '') + risk(ten)
+        gioi_han = 'Phân tích dữ kiện, chưa kiểm duyệt thủ công; đối chiếu mục Sao & nguồn sách.'
+        if not refs:
+            gioi_han += ' Chưa có trích dẫn sách đối chiếu.'
+        return {'nhan_dinh': nhan, 'giai_thich_thun_viet': giai, 'fact_ids': ids,
+                'source_refs': refs, 'gioi_han': gioi_han}
+
+    ket_luan = [pt for pt in (palace_point('Phu thê'), palace_point('Phụ mẫu'), palace_point('Mệnh')) if pt]
     return {
         'tieu_de': f"Dữ kiện lá số — {basic.get('can_chi_nam', '')}",
         'tong_quan': {
@@ -256,6 +313,7 @@ def generate_mock_reading(features: dict[str, Any]) -> dict[str, Any]:
                                'Kiểm tra điều kiện đồng cung/hội chiếu và Tuần/Triệt của đoạn sách.',
                                'Phân biệt sao gốc tại cung tiểu hạn với lưu tinh theo năm.'],
         'luan_diem': [],
+        'ket_luan': ket_luan,
     }
 
 
@@ -289,7 +347,7 @@ def interpret_horoscope(features: dict[str, Any], formatted_context: str, provid
     chain = _model_chain()
 
     def fallback(reason, model):
-        reading = generate_mock_reading(features)
+        reading = generate_mock_reading(features, context)
         reading['_generation'] = {'actual_provider': 'mock', 'is_mock': True, 'reason': reason,
                                   'message': ERROR_MESSAGES.get(reason, ''), 'model': model,
                                   'attempts': attempts, 'specificity_low': False,
