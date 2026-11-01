@@ -1,0 +1,26 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "findings": [],
+      "horizontalOverflow": false
+    },
+    {
+      "width": 768,
+      "findings": [],
+      "horizontalOverflow": false
+    },
+    {
+      "width": 390,
+      "findings": [],
+      "horizontalOverflow": false
+    }
+  ],
+  "rendered": {
+    "palaces": 12,
+    "sources": 18,
+    "isMock": false,
+    "errors": 0
+  },
+  "consoleErrors": []
+}

@@ -18,6 +18,7 @@ from pathlib import Path
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "vendor"))
 sys.path.insert(0, str(ROOT / "frontend"))
 
@@ -52,18 +53,7 @@ GIO_CHI = [
     ("Hợi (21:00 – 23:00)", 12),
 ]
 
-# vị trí ô trong lưới 4x4 theo cung địa bàn (Tý = góc trái dưới)
-CHI_GRID_POS = {
-    1: (3, 0), 2: (3, 1), 3: (0, 3), 4: (1, 3), 5: (2, 3),
-    6: (0, 2), 7: (0, 1), 8: (0, 0), 9: (1, 0), 10: (2, 0),
-    11: (3, 2), 12: (3, 3),
-}
-
-# sắc thái sao cho màu: tốt / hung / thường
-GOOD_SAOS = {92, 93, 94, 98, 59, 60, 57, 58, 67, 68, 71, 72, 24, 34, 80}
-BAD_SAOS = {51, 52, 53, 54, 55, 56, 95, 99, 104, 21, 36, 30, 69, 70}
-DAC_TINH_COLOR = {"M": "#1a7f37", "V": "#2da44e", "Đ": "#0969da",
-                  "B": "#57606a", "H": "#cf222e"}
+from frontend.laso_renderer import luoi_html, sao_html  # noqa: E402
 
 
 def can_gio(canNgay: int, chi: int) -> int:
@@ -121,69 +111,6 @@ def lap_laso(nn: int, tt: int, nnnn: int, chi_gio: int,
         "gioi_tinh": "Nam" if gioi_tinh == 1 else "Nữ",
         "thap_ni_cung": thap_ni_cung,
     }
-
-
-def sao_html(c: dict) -> str:
-    """HTML danh sách sao trong một cung."""
-    parts = []
-    for s in c["saos"]:
-        loai = s.get("saoLoai", 2)
-        dac = s.get("saoDacTinh")
-        ten = s["saoTen"]
-        if loai == 1:
-            chip = ""
-            if dac:
-                m = DAC_TINH_COLOR.get(dac, "#57606a")
-                chip = (f'<span class="qc" style="border-color:{m};color:{m}">'
-                        f"{dac}</span>")
-            parts.append(f'<span class="sao chinh">{ten}</span>{chip}')
-        else:
-            sid = s.get("saoID")
-            cls = "tot" if sid in GOOD_SAOS else ("hung" if sid in BAD_SAOS else "")
-            parts.append(f'<span class="sao phu {cls}">{ten}</span>')
-    return " ".join(parts) or '<span class="sao phu">— (trống)</span>'
-
-
-def luoi_html(cacs_cung: list[dict]) -> str:
-    cells: dict[tuple[int, int], str] = {}
-    for c in cacs_cung:
-        r, col = CHI_GRID_POS[c["cung_so"]]
-        meta = []
-        if c["tu_dai_han"] is not None:
-            meta.append(f"Đại hạn {c['tu_dai_han']}"
-                        f"–{c['tu_dai_han'] + 9}")
-        if c.get("tieu_han_chi"):
-            meta.append(f"Tiểu hạn: {c['tieu_han_chi']}")
-        if c["co_thanh"]:
-            meta.append('<b style="color:#cf222e">THÂN</b>')
-        if c["tuan_trung"]:
-            meta.append("Tuần")
-        if c["triet_lo"]:
-            meta.append("Triệt")
-        ten = c["ten_cung"]
-        if c["co_thanh"]:
-            ten += " (Thân)"
-        cells[(r, col)] = (
-            f'<div class="cell">'
-            f'<div class="chi">{c["chuan_ten"]} · {c["hanh_cung"]}</div>'
-            f'<div class="ten">{ten}</div>'
-            f'<div class="saos">{sao_html(c)}</div>'
-            f'<div class="meta">{" · ".join(meta) or "&nbsp;"}</div>'
-            f"</div>"
-        )
-    # lưới 4x4: 12 ô vòng ngoài + 4 ô trung tâm (trống)
-    rows = []
-    for r in range(4):
-        row = []
-        for col in range(4):
-            if (r, col) in cells:
-                row.append(cells[(r, col)])
-            elif r in (1, 2) and col in (1, 2):
-                row.append('<div class="cell center"></div>')
-            else:
-                row.append('<div class="cell"></div>')
-        rows.append(" ".join(row))
-    return '<div class="grid">' + " ".join(rows) + "</div>"
 
 
 # ---------------------------------------------------------------------------
